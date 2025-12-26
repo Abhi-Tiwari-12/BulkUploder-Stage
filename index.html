@@ -12,24 +12,35 @@
       padding: 0;
       box-sizing: border-box;
     }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
       font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #f8fafc;
       color: #1f2a44;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       line-height: 1.5;
     }
 
-    /* Header */
+    /* Fixed Header */
     header {
       background: linear-gradient(90deg, #1e3a8a, #3b82f6);
       color: #ffffff;
       padding: 1rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
       flex-shrink: 0;
     }
+
     .header-container {
       max-width: 1440px;
       margin: 0 auto;
@@ -37,17 +48,20 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .header-left {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
+
     .header-left img {
       height: 48px;
       width: auto;
       border-radius: 4px;
       filter: invert(1);
     }
+
     .header-left h1 {
       font-size: 1.65rem;
       font-weight: 700;
@@ -57,6 +71,7 @@
       color: transparent;
       letter-spacing: 0.05em;
     }
+
     .mobile-toggle {
       display: none;
       background: none;
@@ -64,11 +79,13 @@
       padding: 0.5rem;
       cursor: pointer;
     }
+
     .mobile-toggle svg {
       width: 28px;
       height: 28px;
       stroke: #ffffff;
     }
+
     .logout-button {
       display: flex;
       align-items: center;
@@ -83,25 +100,29 @@
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.1s ease;
     }
+
     .logout-button:hover {
       background-color: #b91c1c;
       transform: translateY(-1px);
     }
+
     .logout-button:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
     }
+
     .logout-button svg {
       width: 20px;
       height: 20px;
       stroke: #000000;
     }
 
-    /* Main Layout */
+    /* Main Layout – adjusted for fixed header */
     .main-container {
-      display: flex;
       flex: 1;
+      display: flex;
       min-height: 0;
+      margin-top: 80px; /* Height of header */
       overflow: hidden;
     }
 
@@ -111,26 +132,28 @@
       background-color: #fafafa;
       border-right: 1px solid #e2e8f0;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      position: sticky;
-      top: 0;
-      height: 100vh;
       overflow-y: auto;
-      transition: transform 0.3s ease-in-out;
       flex-shrink: 0;
-      z-index: 10;
+      transition: transform 0.3s ease-in-out;
     }
+
     aside.hidden {
       transform: translateX(-100%);
     }
+
     .sidebar-nav {
       padding: 2rem 1.25rem;
     }
+
     .sidebar-nav ul {
       list-style: none;
     }
+
     .sidebar-nav li {
       margin-bottom: 0.5rem;
+      position: relative;
     }
+
     .sidebar-nav a {
       display: flex;
       align-items: center;
@@ -144,20 +167,24 @@
       transition: all 0.3s ease;
       position: relative;
     }
+
     .sidebar-nav a:hover {
       background-color: #edf2f7;
       color: #1e40af;
       transform: translateX(4px);
     }
+
     .sidebar-nav a.active-section {
       background-color: #dbeafe;
       color: #1e3a8a;
       font-weight: 600;
       box-shadow: inset 0 0 0 1px rgba(30, 58, 138, 0.1);
     }
+
     .sidebar-nav a.active-section svg {
       stroke: #1e3a8a;
     }
+
     .sidebar-nav svg {
       width: 22px;
       height: 22px;
@@ -165,6 +192,7 @@
       flex-shrink: 0;
       transition: stroke 0.3s ease;
     }
+
     .sidebar-nav a.active-section::before {
       content: '';
       position: absolute;
@@ -177,6 +205,26 @@
       border-radius: 0 4px 4px 0;
     }
 
+    /* Notification Badge */
+    .notification-badge {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background-color: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
     /* Overlay for Mobile Sidebar */
     .overlay {
       position: fixed;
@@ -185,6 +233,7 @@
       z-index: 40;
       display: none;
     }
+
     .overlay.show {
       display: block;
     }
@@ -193,16 +242,215 @@
     main#content-area {
       flex: 1;
       padding: 2rem 1.5rem;
-      background-color: #f8fafc;
       overflow-y: auto;
-      overflow-x: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
+      background-color: #f8fafc;
     }
 
-    /* Upload Container Styles (used for both Holiday and Variant) */
+    /* Alerts Panel */
+    #alerts-panel {
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #alerts-panel h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #dc2626;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    #alerts-panel .alerts-summary {
+      font-size: 0.95rem;
+      color: #4b5563;
+      margin-bottom: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    #alerts-table-container {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background-color: #f3f4f6;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background-color: #fef2f2;
+    }
+
+    .no-alerts {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6b7280;
+      font-style: italic;
+      font-size: 1rem;
+    }
+
+    /* Take Action Button */
+    .take-action-btn {
+      background: linear-gradient(90deg, #dc2626, #ef4444);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .take-action-btn:hover {
+      background: linear-gradient(90deg, #b91c1c, #dc2626);
+      transform: translateY(-1px);
+    }
+
+    /* Expandable Inline Drawer */
+    .alert-row {
+      transition: background-color 0.2s ease;
+    }
+
+    .alert-row.expanded {
+      background-color: #f0fdf4 !important;
+    }
+
+    .alert-details {
+      display: none;
+      background-color: #f8fafc;
+      border-top: 1px solid #bbf7d0;
+    }
+
+    .alert-details.show {
+      display: table-row;
+    }
+
+    .alert-details td {
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .drawer-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 800px;
+      margin-bottom: 1.5rem;
+    }
+
+    .drawer-form .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .drawer-form label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .drawer-form input {
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .drawer-form input:disabled {
+      background-color: #f3f4f6;
+      color: #4b5563;
+      cursor: not-allowed;
+    }
+
+    .drawer-message {
+      grid-column: 1 / -1;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+      min-height: 1.2em;
+    }
+
+    .drawer-message.success {
+      color: #065f46;
+    }
+
+    .drawer-actions {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+    }
+
+    .apply-oos-btn {
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
+    }
+
+    .apply-oos-btn:hover {
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .apply-oos-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    @media (max-width: 767px) {
+      .drawer-actions {
+        position: static;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+      }
+
+      .drawer-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Upload Container Styles */
     .upload-container {
       background-color: #ffffff;
       border: 1px solid #e5e7eb;
@@ -220,6 +468,7 @@
       overflow: hidden;
       min-height: 0;
     }
+
     .upload-container h2 {
       font-size: 1.5rem;
       font-weight: 700;
@@ -228,6 +477,7 @@
       margin-bottom: 0;
       flex-shrink: 0;
     }
+
     .upload-note {
       font-size: 0.875rem;
       color: #4b5563;
@@ -236,6 +486,7 @@
       margin-bottom: 0;
       flex-shrink: 0;
     }
+
     .upload-actions {
       display: flex;
       flex-direction: column;
@@ -243,6 +494,7 @@
       margin-top: auto;
       flex-shrink: 0;
     }
+
     .download-info {
       text-align: center;
       padding: 1rem;
@@ -251,11 +503,13 @@
       background-color: #f9fafb;
       flex-shrink: 0;
     }
+
     .download-info p {
       font-size: 0.875rem;
       color: #4b5563;
       margin: 0;
     }
+
     .download-link {
       color: #3b82f6;
       text-decoration: none;
@@ -263,10 +517,12 @@
       cursor: pointer;
       transition: color 0.2s ease;
     }
+
     .download-link:hover {
       color: #2563eb;
       text-decoration: underline;
     }
+
     .form-group {
       display: flex;
       flex-direction: column;
@@ -274,12 +530,14 @@
       flex: 1;
       min-height: 0;
     }
+
     .form-group label {
       font-size: 0.875rem;
       font-weight: 500;
       color: #374151;
       flex-shrink: 0;
     }
+
     .drag-drop-area {
       border: 2px dashed #d1d5db;
       border-radius: 8px;
@@ -297,34 +555,41 @@
       overflow: hidden;
       position: relative;
     }
+
     .drag-drop-area.drag-over {
       border-color: #2563eb;
       background-color: #eff6ff;
       box-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
     }
+
     .drag-drop-area.invalid {
       border-color: #ef4444;
       background-color: #fef2f2;
       box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
     }
+
     .drag-drop-area p {
       font-size: 0.875rem;
       color: #4b5563;
       margin-bottom: 0.5rem;
       word-break: break-word;
     }
+
     .drag-drop-area input[type="file"] {
       display: none;
     }
+
     .file-info {
       font-size: 0.75rem;
       color: #6b7280;
       margin-top: 0.5rem;
       display: none;
     }
+
     .file-info.show {
       display: block;
     }
+
     .upload-button {
       background: linear-gradient(90deg, #1e3a8a, #3b82f6);
       color: #ffffff;
@@ -340,16 +605,19 @@
       width: 100%;
       max-width: 300px;
     }
+
     .upload-button:hover:not(:disabled) {
       background: linear-gradient(90deg, #1e40af, #2563eb);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
+
     .upload-button:disabled {
       background: #9ca3af;
       cursor: not-allowed;
       box-shadow: none;
     }
+
     .progress-bar {
       display: none;
       width: 100%;
@@ -359,15 +627,18 @@
       overflow: hidden;
       flex-shrink: 0;
     }
+
     .progress-bar.active {
       display: block;
     }
+
     .progress-bar div {
       height: 100%;
       background: linear-gradient(90deg, #1e3a8a, #3b82f6);
       width: 0;
       transition: width 0.3s ease;
     }
+
     .message {
       display: none;
       align-items: center;
@@ -381,19 +652,23 @@
       flex-shrink: 0;
       border: 1px solid transparent;
     }
+
     .message.show {
       display: flex;
     }
+
     .message.success {
       background-color: #d1fae5;
       color: #065f46;
       border-color: #a7f3d0;
     }
+
     .message.error {
       background-color: #fee2e2;
       color: #991b1b;
       border-color: #fca5a5;
     }
+
     .message svg {
       width: 20px;
       height: 20px;
@@ -416,18 +691,16 @@
       box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2) !important;
       width: 100%;
       max-width: 300px !important;
-      margin: 0 auto 1.5rem auto !important; /* Center and add space below */
-      display: block !important; /* Ensure block-level centering */
+      margin: 0 auto 1.5rem auto !important;
+      display: block !important;
     }
+
     .revert-button:hover {
       background: linear-gradient(90deg, #b91c1c, #dc2626) !important;
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
     }
-    .revert-button:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
-    }
+
     .revert-button:disabled {
       background: #9ca3af !important;
       cursor: not-allowed !important;
@@ -448,9 +721,11 @@
       align-items: center;
       z-index: 1000;
     }
+
     .modal-overlay.show {
       display: flex;
     }
+
     .modal-content {
       background-color: #ffffff;
       border-radius: 8px;
@@ -463,6 +738,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       position: relative;
     }
+
     .close-button {
       position: absolute;
       top: 0.5rem;
@@ -474,15 +750,18 @@
       cursor: pointer;
       transition: color 0.2s ease;
     }
+
     .close-button:hover {
       color: #1f2a44;
     }
+
     .modal-note {
       font-size: 0.875rem;
       color: #374151;
       margin-bottom: 1rem;
       line-height: 1.5;
     }
+
     .revert-select {
       padding: 0.75rem;
       font-size: 0.875rem;
@@ -493,11 +772,13 @@
       margin-bottom: 1rem;
       width: 100%;
     }
+
     .revert-select:focus {
       outline: none;
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
+
     .confirm-revert-button {
       background: linear-gradient(90deg, #dc2626, #ef4444);
       color: #ffffff;
@@ -510,27 +791,17 @@
       transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
       width: 100%;
     }
+
     .confirm-revert-button:hover:not(:disabled) {
       background: linear-gradient(90deg, #b91c1c, #dc2626);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
     }
+
     .confirm-revert-button:disabled {
       background: #9ca3af;
       cursor: not-allowed;
       box-shadow: none;
-    }
-
-    /* Revert Modal Specific Styles */
-    .revert-popup-content {
-      text-align: left;
-    }
-    .revert-popup-content h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: #1f2a44;
-      text-align: center;
     }
 
     /* Variant Section Tabs */
@@ -540,6 +811,7 @@
       margin-bottom: 1rem;
       border-bottom: 2px solid #e5e7eb;
     }
+
     .variant-tab {
       padding: 0.75rem 1.5rem;
       font-size: 0.875rem;
@@ -551,83 +823,92 @@
       transition: all 0.2s ease;
       border-bottom: 2px solid transparent;
     }
+
     .variant-tab.active {
       color: #1e3a8a;
       border-bottom: 2px solid #1e3a8a;
       font-weight: 600;
     }
+
     .variant-tab:hover:not(.active) {
       color: #1e40af;
       background-color: #f1f5f9;
-    }
-
-    /* Button Spacing and Alignment */
-    .upload-container form {
-      margin-bottom: 1.5rem;
-    }
-
-    /* Ensure Upload Actions are Properly Spaced */
-    .upload-actions {
-      margin-top: 0; /* Remove default top margin to align with Holiday section */
     }
 
     /* Responsive Design */
     @media (max-width: 1023px) {
       aside {
         position: fixed;
-        top: 0;
+        top: 80px;
         bottom: 0;
         z-index: 50;
         transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
       }
+
       aside.show {
         transform: translateX(0);
       }
+
       .mobile-toggle {
         display: block;
       }
+
       .header-left h1 {
         font-size: 1.25rem;
       }
+
       main#content-area {
         padding: 1rem;
       }
-      .upload-container {
+
+      .upload-container, #alerts-panel {
         padding: 1rem;
         gap: 1rem;
       }
+
       .drag-drop-area {
         min-height: 120px;
         max-height: 150px;
         padding: 1rem;
       }
+
       .revert-button,
       .upload-button {
         max-width: none !important;
         width: 100% !important;
       }
     }
+
     @media (min-width: 1024px) {
       aside {
         transform: translateX(0);
       }
+
       .mobile-toggle {
         display: none;
       }
     }
 
     /* Custom Scrollbar */
-    main#content-area::-webkit-scrollbar {
+    main#content-area::-webkit-scrollbar,
+    #alerts-table-container::-webkit-scrollbar {
       width: 8px;
     }
-    main#content-area::-webkit-scrollbar-track {
+
+    main#content-area::-webkit-scrollbar-track,
+    #alerts-table-container::-webkit-scrollbar-track {
       background: #f1f1f1;
     }
-    main#content-area::-webkit-scrollbar-thumb {
+
+    main#content-area::-webkit-scrollbar-thumb,
+    #alerts-table-container::-webkit-scrollbar-thumb {
       background: #c1c1c1;
       border-radius: 4px;
     }
-    main#content-area::-webkit-scrollbar-thumb:hover {
+
+    main#content-area::-webkit-scrollbar-thumb:hover,
+    #alerts-table-container::-webkit-scrollbar-thumb:hover {
       background: #a8a8a8;
     }
   </style>
@@ -684,6 +965,15 @@
               Cutoff Upload
             </a>
           </li>
+          <li>
+            <a href="#" data-section="alerts" id="alerts-sidebar-link">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Alerts
+              <span id="alerts-badge" class="notification-badge" style="display:none;"></span>
+            </a>
+          </li>
         </ul>
       </div>
     </aside>
@@ -705,12 +995,16 @@
     const contentArea = document.getElementById('content-area');
     const logoutButton = document.getElementById('logout-button');
     const links = document.querySelectorAll('aside a[data-section]');
+    const alertsBadge = document.getElementById('alerts-badge');
     let isSidebarOpen = false;
 
     // API Configuration
     const API_BASE_URL = 'https://apis.thesleepcompany.in';
+    const ALERTS_API_URL = 'https://apis-stage.thesleepcompany.in/edd/variant-oos/valid-alerts';
+    const TAKE_ACTION_API = 'https://apis-stage.thesleepcompany.in/edd/variant-oos';
     const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE1MTYyMzkwMjJ9.J4lt271SqyJyAU95q4xsSXYv6pJSvMUBW7-0fAJqrM0';
-    
+    const ALERTS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJhZG1pbiJdfQ.MFelpPBRMF7r88jdJZxGK0kvvhwX0f7xdw4yNxIRhGc';
+
     const API_ENDPOINTS = {
       holiday: {
         downloadSample: `${API_BASE_URL}/edd/upload/holidays/sample`,
@@ -734,7 +1028,6 @@
       }
     };
 
-    // VALID FILE TYPES - STRICT VALIDATION
     const VALID_EXTENSIONS = ['.csv', '.xls', '.xlsx'];
     const VALID_MIME_TYPES = [
       'text/csv',
@@ -744,35 +1037,24 @@
       'application/msexcel'
     ];
 
-    // Helper function to validate file
     function isValidFile(file) {
       if (!file) return false;
-
       const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
       const isValidExtension = VALID_EXTENSIONS.includes(fileExtension);
-      
-      const isValidMime = VALID_MIME_TYPES.includes(file.type) || 
-                         (file.type === '' && isValidExtension);
-
+      const isValidMime = VALID_MIME_TYPES.includes(file.type) || (file.type === '' && isValidExtension);
       return isValidExtension && isValidMime;
     }
 
-    // Helper function to safely parse response
     async function parseResponse(response) {
       const contentType = response.headers.get('content-type');
-      
       if (contentType && contentType.includes('application/json')) {
         return await response.json();
       } else {
         const text = await response.text();
-        return {
-          message: text || 'Operation completed',
-          isTextResponse: true
-        };
+        return { message: text || 'Operation completed', isTextResponse: true };
       }
     }
 
-    // Show message function
     function showMessage(containerId, text, type = 'info', previousVersion = null) {
       const message = document.getElementById(`${containerId}-message`);
       const messageText = document.getElementById(`${containerId}-message-text`);
@@ -790,26 +1072,20 @@
         message.classList.add('show');
         
         if (type === 'success') {
-          setTimeout(() => {
-            message.classList.remove('show');
-          }, 5000);
+          setTimeout(() => message.classList.remove('show'), 5000);
         }
       }
     }
 
-    // Update drag drop area with file info
     function updateDragDropArea(fileInput, dragDropArea) {
       const file = fileInput.files[0];
-      const fileInfo = dragDropArea.querySelector('.file-info') || 
-                      document.createElement('div');
+      const fileInfo = dragDropArea.querySelector('.file-info') || document.createElement('div');
       fileInfo.className = 'file-info';
 
       if (!file) {
-        dragDropArea.querySelector('p').textContent = 'Drag and drop your CSV or Excel file here or click to select';
+        dragDropArea.querySelector('p').textContent = 'Drag and drop your CSV or Excel file here or click to select<br><small>Only .csv, .xls, .xlsx files accepted (Max 10MB)</small>';
         fileInfo.classList.remove('show');
-        if (!dragDropArea.querySelector('.file-info')) {
-          dragDropArea.appendChild(fileInfo);
-        }
+        if (!dragDropArea.querySelector('.file-info')) dragDropArea.appendChild(fileInfo);
         return;
       }
 
@@ -821,9 +1097,7 @@
         dragDropArea.querySelector('p').textContent = '❌ Invalid file type. Please select CSV or Excel files only.';
         fileInfo.innerHTML = `<strong>${file.name}</strong> - Unsupported format`;
         fileInfo.classList.add('show');
-        if (!dragDropArea.querySelector('.file-info')) {
-          dragDropArea.appendChild(fileInfo);
-        }
+        if (!dragDropArea.querySelector('.file-info')) dragDropArea.appendChild(fileInfo);
         return;
       }
 
@@ -835,12 +1109,9 @@
         Type: ${fileExtension.toUpperCase()}
       `;
       fileInfo.classList.add('show');
-      if (!dragDropArea.querySelector('.file-info')) {
-        dragDropArea.appendChild(fileInfo);
-      }
+      if (!dragDropArea.querySelector('.file-info')) dragDropArea.appendChild(fileInfo);
     }
 
-    // Download Sample File with retry logic
     async function downloadSample(containerId, section) {
       const downloadLink = document.getElementById(`${containerId}-download-sample-link`);
       if (!downloadLink) return;
@@ -868,7 +1139,7 @@
               attempts++;
               if (attempts < maxAttempts) {
                 showMessage(containerId, `Service unavailable, retrying (${attempts}/${maxAttempts})...`, 'error');
-                await delay(2000); // Wait 2 seconds before retry
+                await delay(2000);
                 continue;
               }
               throw new Error('Service temporarily unavailable after multiple attempts');
@@ -878,14 +1149,15 @@
           }
 
           const blob = await response.blob();
-          if (!blob || blob.size === 0) {
-            throw new Error('Empty response from server');
-          }
+          if (!blob || blob.size === 0) throw new Error('Empty response from server');
 
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `${section === 'variantOos' ? 'Variant_OOS' : section === 'variantDelays' ? 'Variant_Delays' : 'Cutoff'}.zip`;
+          const fileName = section === 'variantOos' ? 'Variant_OOS.zip' : 
+                           section === 'variantDelays' ? 'Variant_Delays.zip' : 
+                           section === 'cutoff' ? 'Cutoff.zip' : 'Holiday.zip';
+          link.download = fileName;
           document.body.appendChild(link);
           link.click();
           window.URL.revokeObjectURL(url);
@@ -904,7 +1176,6 @@
       downloadLink.textContent = originalText;
     }
 
-    // Revert Uploads Function
     async function revertUploads(containerId, section, count) {
       if (!count || count < 1) {
         showMessage(containerId, 'Please select a valid number of uploads to revert.', 'error');
@@ -934,12 +1205,11 @@
         }
 
         const result = await parseResponse(response);
-        console.log('Revert successful:', result);
-        
         const successMessage = result.message || `Successfully reverted last ${count} upload(s)!`;
         showMessage(containerId, successMessage, 'success');
         closeRevertModal(containerId);
-        
+        await refreshAlerts();
+
       } catch (error) {
         console.error('Revert error:', error);
         showMessage(containerId, `Revert failed: ${error.message}`, 'error');
@@ -951,41 +1221,31 @@
       }
     }
 
-    // Close Revert Modal
     function closeRevertModal(containerId) {
       const revertPopup = document.getElementById(`${containerId}-revert-popup`);
       const revertSelect = document.getElementById(`${containerId}-revert-select`);
       const confirmRevert = document.getElementById(`${containerId}-confirm-revert`);
       
-      if (revertPopup) {
-        revertPopup.classList.remove('show');
-      }
-      if (revertSelect) {
-        revertSelect.value = '';
-      }
+      if (revertPopup) revertPopup.classList.remove('show');
+      if (revertSelect) revertSelect.value = '';
       if (confirmRevert) {
         confirmRevert.disabled = true;
         confirmRevert.textContent = 'Confirm Revert';
       }
     }
 
-    // Initialize Revert Modal Functionality
     function initializeRevertModal(containerId, section) {
       const revertPopup = document.getElementById(`${containerId}-revert-popup`);
       const closeRevertPopup = document.getElementById(`${containerId}-close-revert-popup`);
       const revertSelect = document.getElementById(`${containerId}-revert-select`);
       const confirmRevert = document.getElementById(`${containerId}-confirm-revert`);
 
-      if (!revertPopup || !closeRevertPopup || !revertSelect || !confirmRevert) {
-        return;
-      }
+      if (!revertPopup || !closeRevertPopup || !revertSelect || !confirmRevert) return;
 
       closeRevertPopup.addEventListener('click', () => closeRevertModal(containerId));
       
       revertPopup.addEventListener('click', (e) => {
-        if (e.target === revertPopup) {
-          closeRevertModal(containerId);
-        }
+        if (e.target === revertPopup) closeRevertModal(containerId);
       });
 
       revertSelect.addEventListener('change', function() {
@@ -994,11 +1254,9 @@
         confirmRevert.textContent = selectedValue ? `Revert Last ${selectedValue} Upload(s)` : 'Confirm Revert';
       });
 
-      confirmRevert.addEventListener('click', function() {
+      confirmRevert.addEventListener('click', () => {
         const count = parseInt(revertSelect.value);
-        if (count) {
-          revertUploads(containerId, section, count);
-        }
+        if (count) revertUploads(containerId, section, count);
       });
 
       const handleEscape = (e) => {
@@ -1010,27 +1268,22 @@
       revertPopup._handleEscape = handleEscape;
     }
 
-    // Initialize Revert Button
-    function initializeRevertButton(containerId, section) {
+    function initializeRevertButton(containerId) {
       const revertButton = document.getElementById(`${containerId}-revert-last-uploads`);
       if (revertButton) {
         revertButton.disabled = false;
         revertButton.style.opacity = '1';
         revertButton.style.cursor = 'pointer';
         
-        revertButton.addEventListener('click', function(e) {
+        revertButton.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          
           const revertPopup = document.getElementById(`${containerId}-revert-popup`);
-          if (revertPopup) {
-            revertPopup.classList.add('show');
-          }
+          if (revertPopup) revertPopup.classList.add('show');
         });
       }
     }
 
-    // Initialize Upload Section
     function initializeUpload(containerId, section, sectionTitle) {
       const form = document.getElementById(`${containerId}-upload-form`);
       const fileInput = document.getElementById(`${containerId}-file-input`);
@@ -1038,20 +1291,17 @@
       const uploadButton = document.getElementById(`${containerId}-upload-button`);
       const progressBar = document.getElementById(`${containerId}-progress-bar`);
       const progress = document.getElementById(`${containerId}-progress`);
-      const message = document.getElementById(`${containerId}-message`);
       const downloadLink = document.getElementById(`${containerId}-download-sample-link`);
 
       if (!form || !fileInput || !dragDropArea) return;
 
-      // Download sample link
       if (downloadLink) {
-        downloadLink.addEventListener('click', function(e) {
+        downloadLink.addEventListener('click', (e) => {
           e.preventDefault();
           downloadSample(containerId, section);
         });
       }
 
-      // File input change handler with validation
       function handleFileChange() {
         const file = fileInput.files[0];
         const isValid = isValidFile(file);
@@ -1070,10 +1320,9 @@
 
       fileInput.addEventListener('change', handleFileChange);
 
-      // Drag and drop with strict validation
       const handleDragOver = (e) => {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopPropagation;
         if (isValidFile(e.dataTransfer.files[0])) {
           dragDropArea.classList.add('drag-over');
         }
@@ -1081,13 +1330,13 @@
 
       const handleDragLeave = (e) => {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopPropagation;
         dragDropArea.classList.remove('drag-over', 'invalid');
       };
 
       const handleDrop = (e) => {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopPropagation;
         dragDropArea.classList.remove('drag-over');
         
         const files = e.dataTransfer.files;
@@ -1110,7 +1359,6 @@
         fileInput.click();
       });
 
-      // Form submission
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
         const file = fileInput.files[0];
@@ -1134,7 +1382,6 @@
         uploadButton.disabled = true;
         uploadButton.textContent = 'Uploading...';
         if (progressBar) progressBar.classList.add('active');
-        if (message) message.classList.remove('show');
 
         let progressWidth = 0;
         const progressInterval = setInterval(() => {
@@ -1173,6 +1420,8 @@
           updateDragDropArea(fileInput, dragDropArea);
           uploadButton.disabled = true;
 
+          await refreshAlerts();
+
         } catch (error) {
           console.error('Error uploading file:', error);
           clearInterval(progressInterval);
@@ -1184,87 +1433,224 @@
         }
       });
 
-      initializeRevertButton(containerId, section);
+      initializeRevertButton(containerId);
       initializeRevertModal(containerId, section);
     }
 
-    // Initialize Holiday Upload
-    function initializeHolidayUpload() {
-      initializeUpload('holiday', 'holiday', 'Holidays');
-    }
+    function initializeHolidayUpload() { initializeUpload('holiday', 'holiday', 'Holidays'); }
+    function initializeVariantOosUpload() { initializeUpload('variant-oos', 'variantOos', 'Variant OOS'); }
+    function initializeVariantDelaysUpload() { initializeUpload('variant-delays', 'variantDelays', 'Variant Delays'); }
+    function initializeCutoffUpload() { initializeUpload('cutoff', 'cutoff', 'Cutoffs'); }
 
-    // Initialize Variant OOS Upload
-    function initializeVariantOosUpload() {
-      initializeUpload('variant-oos', 'variantOos', 'Variant OOS');
-    }
-
-    // Initialize Variant Delays Upload
-    function initializeVariantDelaysUpload() {
-      initializeUpload('variant-delays', 'variantDelays', 'Variant Delays');
-    }
-
-    // Initialize Cutoff Upload
-    function initializeCutoffUpload() {
-      initializeUpload('cutoff', 'cutoff', 'Cutoffs');
-    }
-
-    // Mobile Sidebar Toggle
-    if (mobileToggle) {
-      mobileToggle.addEventListener('click', () => {
-        isSidebarOpen = !isSidebarOpen;
-        sidebar.classList.toggle('show', isSidebarOpen);
-        sidebar.classList.toggle('hidden', !isSidebarOpen);
-        overlay.classList.toggle('show', isSidebarOpen);
-      });
-    }
-
-    if (overlay) {
-      overlay.addEventListener('click', () => {
-        sidebar.classList.remove('show');
-        sidebar.classList.add('hidden');
-        overlay.classList.remove('show');
-        isSidebarOpen = false;
-      });
-    }
-
-    // Sidebar Navigation
-    links.forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const section = this.getAttribute('data-section');
-
-        links.forEach(l => {
-          l.classList.remove('active-section');
-          l.setAttribute('aria-current', 'false');
+    // === ALERTS LOGIC ===
+    async function fetchAlerts() {
+      try {
+        const response = await fetch(ALERTS_API_URL, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${ALERTS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
         });
-        this.classList.add('active-section');
-        this.setAttribute('aria-current', 'page');
 
-        if (isSidebarOpen) {
-          sidebar.classList.remove('show');
-          sidebar.classList.add('hidden');
-          overlay.classList.remove('show');
-          isSidebarOpen = false;
-        }
+        if (!response.ok) throw new Error('Failed to fetch alerts');
 
-        if (section === 'holiday') {
-          loadHolidaySection();
-        } else if (section === 'variant') {
-          loadVariantSection();
-        } else if (section === 'cutoff') {
-          loadCutoffSection();
+        const data = await response.json();
+        const count = data.returned || 0;
+        const items = data.items || [];
+
+        if (count > 0) {
+          alertsBadge.textContent = count;
+          alertsBadge.style.display = 'flex';
         } else {
-          contentArea.innerHTML = `
-            <div style="max-width: 600px; margin: 0 auto; padding: 2rem; text-align: center;">
-              <h2>${section.charAt(0).toUpperCase() + section.slice(1)} Upload</h2>
-              <p>${section} upload functionality will be implemented here.</p>
-            </div>
-          `;
+          alertsBadge.style.display = 'none';
         }
-      });
-    });
 
-    // Load Holiday Section
+        window.currentAlerts = items;
+        window.currentAlertsCount = count;
+
+      } catch (err) {
+        console.error('Alerts fetch error:', err);
+        alertsBadge.style.display = 'none';
+        window.currentAlerts = [];
+        window.currentAlertsCount = 0;
+      }
+    }
+
+    async function refreshAlerts() {
+      await fetchAlerts();
+      if (document.querySelector('#alerts-panel')) {
+        loadAlertsSection();
+      }
+    }
+
+    function loadAlertsSection() {
+      const alerts = window.currentAlerts || [];
+      const count = window.currentAlertsCount || 0;
+
+      contentArea.innerHTML = `
+        <div id="alerts-panel">
+          <h2>
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:28px;height:28px;stroke:#dc2626;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            Variant OOS Alerts
+          </h2>
+          <p class="alerts-summary">
+            Showing <strong>${count}</strong> invalid or conflicting variant entries from recent uploads.
+          </p>
+          ${count === 0 ? `
+            <div class="no-alerts">
+              <p>🎉 No alerts at the moment! All uploaded variants are valid and in sync.</p>
+            </div>
+          ` : `
+            <div id="alerts-table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>Variant ID</th>
+                    <th>Pickup Pincode</th>
+                    <th>Detected On</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${alerts.map((item, index) => `
+                    <tr class="alert-row" data-index="${index}">
+                      <td><strong>${item.SKU}</strong></td>
+                      <td>${item.variant_id}</td>
+                      <td>${item.pickup_pincode}</td>
+                      <td>${new Date(item.timestamp).toLocaleString()}</td>
+                      <td><button class="take-action-btn">Take Action</button></td>
+                    </tr>
+                    <tr class="alert-details" id="details-${index}">
+                      <td colspan="5">
+                        <div class="drawer-form">
+                          <div class="form-group">
+                            <label>Variant ID</label>
+                            <input type="text" value="${item.variant_id}" disabled>
+                          </div>
+                          <div class="form-group">
+                            <label>Pickup Pincode</label>
+                            <input type="text" value="${item.pickup_pincode}" disabled>
+                          </div>
+                          <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" class="start-date-input" required>
+                          </div>
+                          <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" class="end-date-input" required>
+                          </div>
+                          <div class="drawer-message" id="message-${index}"></div>
+                        </div>
+                        <div class="drawer-actions">
+                          <button class="apply-oos-btn" data-index="${index}" data-variant="${item.variant_id}" data-pincode="${item.pickup_pincode}">Apply OOS Period</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `}
+        </div>
+      `;
+
+      // Toggle expandable row on "Take Action"
+      document.querySelectorAll('.take-action-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const row = this.closest('.alert-row');
+          const index = row.getAttribute('data-index');
+          const detailsRow = document.getElementById(`details-${index}`);
+
+          // Close all other open drawers
+          document.querySelectorAll('.alert-details.show').forEach(d => {
+            if (d.id !== `details-${index}`) d.classList.remove('show');
+          });
+          document.querySelectorAll('.alert-row.expanded').forEach(r => {
+            if (r.getAttribute('data-index') !== index) r.classList.remove('expanded');
+          });
+
+          // Toggle current
+          row.classList.toggle('expanded');
+          detailsRow.classList.toggle('show');
+
+          // Set default dates when opening
+          if (detailsRow.classList.contains('show')) {
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            detailsRow.querySelector('.start-date-input').value = today;
+            detailsRow.querySelector('.end-date-input').value = nextWeek;
+            document.getElementById(`message-${index}`).textContent = '';
+          }
+        });
+      });
+
+      // Apply OOS Period
+      document.querySelectorAll('.apply-oos-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const index = this.getAttribute('data-index');
+          const variant_id = this.getAttribute('data-variant');
+          const pickup_pincode = this.getAttribute('data-pincode');
+          const start_date = document.querySelectorAll('.start-date-input')[index].value;
+          const end_date = document.querySelectorAll('.end-date-input')[index].value;
+          const messageEl = document.getElementById(`message-${index}`);
+
+          if (!start_date || !end_date) {
+            messageEl.textContent = 'Please select both start and end dates.';
+            messageEl.style.color = '#991b1b';
+            return;
+          }
+
+          if (new Date(start_date) > new Date(end_date)) {
+            messageEl.textContent = 'Start date cannot be after end date.';
+            messageEl.style.color = '#991b1b';
+            return;
+          }
+
+          this.disabled = true;
+          this.textContent = 'Applying...';
+
+          try {
+            const response = await fetch(TAKE_ACTION_API, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${ALERTS_TOKEN}`
+              },
+              body: JSON.stringify({
+                variant_id,
+                pickup_pincode,
+                start_date,
+                end_date
+              })
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.message || 'Failed to apply OOS period');
+            }
+
+            messageEl.textContent = 'OOS period applied successfully!';
+            messageEl.style.color = '#065f46';
+
+            setTimeout(() => {
+              refreshAlerts();
+            }, 1500);
+
+          } catch (error) {
+            messageEl.textContent = error.message || 'Failed to apply OOS period';
+            messageEl.style.color = '#991b1b';
+          } finally {
+            this.disabled = false;
+            this.textContent = 'Apply OOS Period';
+          }
+        });
+      });
+    }
+
     function loadHolidaySection() {
       contentArea.innerHTML = `
         <div class="upload-container holiday-upload-container">
@@ -1332,7 +1718,6 @@
       setTimeout(initializeHolidayUpload, 100);
     }
 
-    // Load Variant Section
     function loadVariantSection() {
       contentArea.innerHTML = `
         <div class="upload-container variant-upload-container">
@@ -1462,20 +1847,13 @@
         </div>
       `;
 
-      // Initialize tab functionality
       const tabs = document.querySelectorAll('.variant-tab');
-      const contents = document.querySelectorAll('.variant-content');
-
       tabs.forEach(tab => {
         tab.addEventListener('click', function() {
-          tabs.forEach(t => t.classList.remove('active'));
-          contents.forEach(c => c.style.display = 'none');
-
+          document.querySelectorAll('.variant-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.variant-content').forEach(c => c.style.display = 'none');
           this.classList.add('active');
-          const tabContent = document.getElementById(`${this.getAttribute('data-tab')}-content`);
-          if (tabContent) {
-            tabContent.style.display = 'block';
-          }
+          document.getElementById(`${this.getAttribute('data-tab')}-content`).style.display = 'block';
 
           if (this.getAttribute('data-tab') === 'variant-oos') {
             setTimeout(initializeVariantOosUpload, 100);
@@ -1485,11 +1863,9 @@
         });
       });
 
-      // Initialize the active tab
       setTimeout(initializeVariantOosUpload, 100);
     }
 
-    // Load Cutoff Section
     function loadCutoffSection() {
       contentArea.innerHTML = `
         <div class="upload-container cutoff-upload-container">
@@ -1557,6 +1933,57 @@
       setTimeout(initializeCutoffUpload, 100);
     }
 
+    // Mobile Sidebar Toggle
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        isSidebarOpen = !isSidebarOpen;
+        sidebar.classList.toggle('show', isSidebarOpen);
+        sidebar.classList.toggle('hidden', !isSidebarOpen);
+        overlay.classList.toggle('show', isSidebarOpen);
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        sidebar.classList.add('hidden');
+        overlay.classList.remove('show');
+        isSidebarOpen = false;
+      });
+    }
+
+    // Sidebar Navigation
+    links.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.getAttribute('data-section');
+
+        links.forEach(l => {
+          l.classList.remove('active-section');
+          l.setAttribute('aria-current', 'false');
+        });
+        this.classList.add('active-section');
+        this.setAttribute('aria-current', 'page');
+
+        if (isSidebarOpen) {
+          sidebar.classList.remove('show');
+          sidebar.classList.add('hidden');
+          overlay.classList.remove('show');
+          isSidebarOpen = false;
+        }
+
+        if (section === 'holiday') {
+          loadHolidaySection();
+        } else if (section === 'variant') {
+          loadVariantSection();
+        } else if (section === 'cutoff') {
+          loadCutoffSection();
+        } else if (section === 'alerts') {
+          loadAlertsSection();
+        }
+      });
+    });
+
     // Cleanup previous modals
     const existingPopups = [
       'holiday-revert-popup',
@@ -1581,7 +2008,9 @@
     }
 
     // Initial load
-    loadCutoffSection();
+    fetchAlerts().then(() => {
+      loadCutoffSection();
+    });
   });
   </script>
 </body>
