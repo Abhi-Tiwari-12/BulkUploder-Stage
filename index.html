@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TSC EDD BulkUploader - Professional tool for variant, holiday, and cutoff uploads.">
+  <title>TSC BulkUploader - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1f2a44;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      color: #ffffff;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+    .header-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header-left img {
+      height: 48px;
+      width: auto;
+      border-radius: 4px;
+      filter: invert(1);
+    }
+    .header-left h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      background: white;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 0.05em;
+    }
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    .mobile-toggle svg {
+      width: 28px;
+      height: 28px;
+      stroke: #ffffff;
+    }
+    .logout-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: white;
+      color: black;
+      padding: 0.6rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+    .logout-button:hover {
+      background-color: #b91c1c;
+      transform: translateY(-1px);
+    }
+    .logout-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+    }
+    .logout-button svg {
+      width: 20px;
+      height: 20px;
+      stroke: #000000;
+    }
+
+    /* Main Layout */
+    .main-container {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    aside {
+      width: 260px;
+      background-color: #fafafa;
+      border-right: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      transition: transform 0.3s ease-in-out;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    aside.hidden {
+      transform: translateX(-100%);
+    }
+    .sidebar-nav {
+      padding: 2rem 1.25rem;
+    }
+    .sidebar-nav ul {
+      list-style: none;
+    }
+    .sidebar-nav li {
+      margin-bottom: 0.5rem;
+    }
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #2d3748;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .sidebar-nav a:hover {
+      background-color: #edf2f7;
+      color: #1e40af;
+      transform: translateX(4px);
+    }
+    .sidebar-nav a.active-section {
+      background-color: #dbeafe;
+      color: #1e3a8a;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(30, 58, 138, 0.1);
+    }
+    .sidebar-nav a.active-section svg {
+      stroke: #1e3a8a;
+    }
+    .sidebar-nav svg {
+      width: 22px;
+      height: 22px;
+      stroke: #4b5563;
+      flex-shrink: 0;
+      transition: stroke 0.3s ease;
+    }
+    .sidebar-nav a.active-section::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 24px;
+      background-color: #1e3a8a;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Overlay for Mobile Sidebar */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 40;
+      display: none;
+    }
+    .overlay.show {
+      display: block;
+    }
+
+    /* Main Content */
+    main#content-area {
+      flex: 1;
+      padding: 2rem 1.5rem;
+      background-color: #f8fafc;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    /* Upload Container Styles (used for both Holiday and Variant) */
+    .upload-container {
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0;
+      height: fit-content;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .upload-container h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2a44;
+      letter-spacing: -0.025em;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+    .upload-note {
+      font-size: 0.875rem;
+      color: #4b5563;
+      font-style: normal;
+      line-height: 1.5;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+    .upload-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: auto;
+      flex-shrink: 0;
+    }
+    .download-info {
+      text-align: center;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background-color: #f9fafb;
+      flex-shrink: 0;
+    }
+    .download-info p {
+      font-size: 0.875rem;
+      color: #4b5563;
+      margin: 0;
+    }
+    .download-link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .download-link:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+      min-height: 0;
+    }
+    .form-group label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      flex-shrink: 0;
+    }
+    .drag-drop-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      padding: 1.5rem;
+      text-align: center;
+      background-color: #f9fafb;
+      transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 150px;
+      max-height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+    .drag-drop-area.drag-over {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
+    }
+    .drag-drop-area.invalid {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+    }
+    .drag-drop-area p {
+      font-size: 0.875rem;
+      color: #4b5563;
+      margin-bottom: 0.5rem;
+      word-break: break-word;
+    }
+    .drag-drop-area input[type="file"] {
+      display: none;
+    }
+    .file-info {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .file-info.show {
+      display: block;
+    }
+    .upload-button {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      align-self: center;
+      flex-shrink: 0;
+      width: 100%;
+      max-width: 300px;
+    }
+    .upload-button:hover:not(:disabled) {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .upload-button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .progress-bar {
+      display: none;
+      width: 100%;
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .progress-bar.active {
+      display: block;
+    }
+    .progress-bar div {
+      height: 100%;
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      width: 0;
+      transition: width 0.3s ease;
+    }
+    .message {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      padding: 0.75rem;
+      border-radius: 6px;
+      max-width: 100%;
+      overflow: hidden;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      border: 1px solid transparent;
+    }
+    .message.show {
+      display: flex;
+    }
+    .message.success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+    .message.error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border-color: #fca5a5;
+    }
+    .message svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Revert Button */
+    .revert-button {
+      background: linear-gradient(90deg, #dc2626, #ef4444) !important;
+      color: #ffffff !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: 6px !important;
+      font-size: 0.875rem !important;
+      font-weight: 500 !important;
+      border: none !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      align-self: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2) !important;
+      width: 100%;
+      max-width: 300px !important;
+      margin: 0 auto 1.5rem auto !important; /* Center and add space below */
+      display: block !important; /* Ensure block-level centering */
+    }
+    .revert-button:hover {
+      background: linear-gradient(90deg, #b91c1c, #dc2626) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+    }
+    .revert-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+    }
+    .revert-button:disabled {
+      background: #9ca3af !important;
+      cursor: not-allowed !important;
+      box-shadow: none !important;
+      opacity: 0.6 !important;
+    }
+
+    /* Popup Overlay Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-content {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      max-width: 400px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+    .close-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: #4b5563;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .close-button:hover {
+      color: #1f2a44;
+    }
+    .modal-note {
+      font-size: 0.875rem;
+      color: #374151;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .revert-select {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background-color: #ffffff;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+    .revert-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .confirm-revert-button {
+      background: linear-gradient(90deg, #dc2626, #ef4444);
+      color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      width: 100%;
+    }
+    .confirm-revert-button:hover:not(:disabled) {
+      background: linear-gradient(90deg, #b91c1c, #dc2626);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+    .confirm-revert-button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Revert Modal Specific Styles */
+    .revert-popup-content {
+      text-align: left;
+    }
+    .revert-popup-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1f2a44;
+      text-align: center;
+    }
+
+    /* Variant Section Tabs */
+    .variant-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .variant-tab {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #4b5563;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+    .variant-tab.active {
+      color: #1e3a8a;
+      border-bottom: 2px solid #1e3a8a;
+      font-weight: 600;
+    }
+    .variant-tab:hover:not(.active) {
+      color: #1e40af;
+      background-color: #f1f5f9;
+    }
+
+    /* Button Spacing and Alignment */
+    .upload-container form {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Ensure Upload Actions are Properly Spaced */
+    .upload-actions {
+      margin-top: 0; /* Remove default top margin to align with Holiday section */
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1023px) {
+      aside {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        z-index: 50;
+        transform: translateX(-100%);
+      }
+      aside.show {
+        transform: translateX(0);
+      }
+      .mobile-toggle {
+        display: block;
+      }
+      .header-left h1 {
+        font-size: 1.25rem;
+      }
+      main#content-area {
+        padding: 1rem;
+      }
+      .upload-container {
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .drag-drop-area {
+        min-height: 120px;
+        max-height: 150px;
+        padding: 1rem;
+      }
+      .revert-button,
+      .upload-button {
+        max-width: none !important;
+        width: 100% !important;
+      }
+    }
+    @media (min-width: 1024px) {
+      aside {
+        transform: translateX(0);
+      }
+      .mobile-toggle {
+        display: none;
+      }
+    }
+
+    /* Custom Scrollbar */
+    main#content-area::-webkit-scrollbar {
+      width: 8px;
+    }
+    main#content-area::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    main#content-area::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    main#content-area::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="header-left">
+        <button id="mobile-menu-toggle" class="mobile-toggle" aria-label="Toggle sidebar">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <img src="creatives/Tsc logo.png" alt="TSC EDD BulkUploader Logo" onerror="this.style.display='none'">
+        <h1>TSC BulkUploader</h1>
+      </div>
+      <button id="logout-button" class="logout-button">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <aside id="sidebar" aria-label="Sidebar">
+      <div class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#" data-section="variant">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              Variant Upload
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="holiday">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Holiday Upload
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="cutoff" class="active-section" aria-current="page">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Cutoff Upload
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Overlay for Mobile Sidebar -->
+    <div id="mobile-sidebar-overlay" class="overlay"></div>
+
+    <!-- Main Content -->
+    <main id="content-area">
+      <!-- Initial content will be loaded via JS -->
+    </main>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const overlay = document.getElementById('mobile-sidebar-overlay');
+    const contentArea = document.getElementById('content-area');
+    const logoutButton = document.getElementById('logout-button');
+    const links = document.querySelectorAll('aside a[data-section]');
+    let isSidebarOpen = false;
+
+    // API Configuration
+    const API_BASE_URL = 'https://apis.thesleepcompany.in';
+    const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE1MTYyMzkwMjJ9.J4lt271SqyJyAU95q4xsSXYv6pJSvMUBW7-0fAJqrM0';
+    
+    const API_ENDPOINTS = {
+      holiday: {
+        downloadSample: `${API_BASE_URL}/edd/upload/holidays/sample`,
+        upload: `${API_BASE_URL}/edd/upload/holidays`,
+        revert: (count) => `${API_BASE_URL}/edd/upload/holidays/revert/${count}`
+      },
+      variantOos: {
+        downloadSample: `${API_BASE_URL}/edd/upload/variant-oos/sample`,
+        upload: `${API_BASE_URL}/edd/upload/variant-oos`,
+        revert: (count) => `${API_BASE_URL}/edd/upload/variant-oos/revert/${count}`
+      },
+      variantDelays: {
+        downloadSample: `${API_BASE_URL}/edd/upload/variant-delays/sample`,
+        upload: `${API_BASE_URL}/edd/upload/variant-delays`,
+        revert: (count) => `${API_BASE_URL}/edd/upload/variant-delays/revert/${count}`
+      },
+      cutoff: {
+        downloadSample: `${API_BASE_URL}/edd/upload/cutoffs/sample`,
+        upload: `${API_BASE_URL}/edd/upload/cutoffs`,
+        revert: (count) => `${API_BASE_URL}/edd/upload/cutoffs/revert/${count}`
+      }
+    };
+
+    // VALID FILE TYPES - STRICT VALIDATION
+    const VALID_EXTENSIONS = ['.csv', '.xls', '.xlsx'];
+    const VALID_MIME_TYPES = [
+      'text/csv',
+      'text/plain',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/msexcel'
+    ];
+
+    // Helper function to validate file
+    function isValidFile(file) {
+      if (!file) return false;
+
+      const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+      const isValidExtension = VALID_EXTENSIONS.includes(fileExtension);
+      
+      const isValidMime = VALID_MIME_TYPES.includes(file.type) || 
+                         (file.type === '' && isValidExtension);
+
+      return isValidExtension && isValidMime;
+    }
+
+    // Helper function to safely parse response
+    async function parseResponse(response) {
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        const text = await response.text();
+        return {
+          message: text || 'Operation completed',
+          isTextResponse: true
+        };
+      }
+    }
+
+    // Show message function
+    function showMessage(containerId, text, type = 'info', previousVersion = null) {
+      const message = document.getElementById(`${containerId}-message`);
+      const messageText = document.getElementById(`${containerId}-message-text`);
+      const successIcon = message?.querySelector('.success-icon');
+      const errorIcon = message?.querySelector('.error-icon');
+
+      if (message && messageText) {
+        const displayText = type === 'success' && previousVersion !== null 
+          ? `${text} Previous Version: ${previousVersion}`
+          : text;
+        messageText.textContent = displayText;
+        message.className = `message ${type}`;
+        if (successIcon) successIcon.style.display = type === 'success' ? 'inline' : 'none';
+        if (errorIcon) errorIcon.style.display = type === 'error' ? 'inline' : 'none';
+        message.classList.add('show');
+        
+        if (type === 'success') {
+          setTimeout(() => {
+            message.classList.remove('show');
+          }, 5000);
+        }
+      }
+    }
+
+    // Update drag drop area with file info
+    function updateDragDropArea(fileInput, dragDropArea) {
+      const file = fileInput.files[0];
+      const fileInfo = dragDropArea.querySelector('.file-info') || 
+                      document.createElement('div');
+      fileInfo.className = 'file-info';
+
+      if (!file) {
+        dragDropArea.querySelector('p').textContent = 'Drag and drop your CSV or Excel file here or click to select';
+        fileInfo.classList.remove('show');
+        if (!dragDropArea.querySelector('.file-info')) {
+          dragDropArea.appendChild(fileInfo);
+        }
+        return;
+      }
+
+      const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+      const isValidExt = VALID_EXTENSIONS.includes(fileExtension);
+      
+      if (!isValidExt) {
+        dragDropArea.classList.add('invalid');
+        dragDropArea.querySelector('p').textContent = '❌ Invalid file type. Please select CSV or Excel files only.';
+        fileInfo.innerHTML = `<strong>${file.name}</strong> - Unsupported format`;
+        fileInfo.classList.add('show');
+        if (!dragDropArea.querySelector('.file-info')) {
+          dragDropArea.appendChild(fileInfo);
+        }
+        return;
+      }
+
+      dragDropArea.classList.remove('invalid', 'drag-over');
+      dragDropArea.querySelector('p').textContent = '✅ Valid file selected:';
+      fileInfo.innerHTML = `
+        <strong>${file.name}</strong><br>
+        Size: ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+        Type: ${fileExtension.toUpperCase()}
+      `;
+      fileInfo.classList.add('show');
+      if (!dragDropArea.querySelector('.file-info')) {
+        dragDropArea.appendChild(fileInfo);
+      }
+    }
+
+    // Download Sample File with retry logic
+    async function downloadSample(containerId, section) {
+      const downloadLink = document.getElementById(`${containerId}-download-sample-link`);
+      if (!downloadLink) return;
+      
+      downloadLink.style.pointerEvents = 'none';
+      const originalText = downloadLink.textContent;
+      downloadLink.textContent = 'Downloading...';
+
+      let attempts = 0;
+      const maxAttempts = 3;
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+      while (attempts < maxAttempts) {
+        try {
+          const response = await fetch(API_ENDPOINTS[section].downloadSample, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${TOKEN}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!response.ok) {
+            if (response.status === 503) {
+              attempts++;
+              if (attempts < maxAttempts) {
+                showMessage(containerId, `Service unavailable, retrying (${attempts}/${maxAttempts})...`, 'error');
+                await delay(2000); // Wait 2 seconds before retry
+                continue;
+              }
+              throw new Error('Service temporarily unavailable after multiple attempts');
+            }
+            const errorData = await parseResponse(response);
+            throw new Error(errorData.message || `HTTP ${response.status}: Failed to download sample`);
+          }
+
+          const blob = await response.blob();
+          if (!blob || blob.size === 0) {
+            throw new Error('Empty response from server');
+          }
+
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${section === 'variantOos' ? 'Variant_OOS' : section === 'variantDelays' ? 'Variant_Delays' : 'Cutoff'}.zip`;
+          document.body.appendChild(link);
+          link.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(link);
+
+          showMessage(containerId, 'Sample file downloaded successfully!', 'success');
+          break;
+
+        } catch (error) {
+          console.error('Download error:', error);
+          showMessage(containerId, `Download failed: ${error.message}`, 'error');
+        }
+      }
+
+      downloadLink.style.pointerEvents = 'auto';
+      downloadLink.textContent = originalText;
+    }
+
+    // Revert Uploads Function
+    async function revertUploads(containerId, section, count) {
+      if (!count || count < 1) {
+        showMessage(containerId, 'Please select a valid number of uploads to revert.', 'error');
+        return;
+      }
+
+      const revertButton = document.getElementById(`${containerId}-confirm-revert`);
+      if (!revertButton) return;
+      
+      const originalText = revertButton.textContent;
+      
+      try {
+        revertButton.disabled = true;
+        revertButton.textContent = 'Reverting...';
+        
+        const response = await fetch(API_ENDPOINTS[section].revert(count), {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await parseResponse(response);
+          throw new Error(errorData.message || `HTTP ${response.status}: Revert failed`);
+        }
+
+        const result = await parseResponse(response);
+        console.log('Revert successful:', result);
+        
+        const successMessage = result.message || `Successfully reverted last ${count} upload(s)!`;
+        showMessage(containerId, successMessage, 'success');
+        closeRevertModal(containerId);
+        
+      } catch (error) {
+        console.error('Revert error:', error);
+        showMessage(containerId, `Revert failed: ${error.message}`, 'error');
+      } finally {
+        if (revertButton) {
+          revertButton.disabled = false;
+          revertButton.textContent = originalText;
+        }
+      }
+    }
+
+    // Close Revert Modal
+    function closeRevertModal(containerId) {
+      const revertPopup = document.getElementById(`${containerId}-revert-popup`);
+      const revertSelect = document.getElementById(`${containerId}-revert-select`);
+      const confirmRevert = document.getElementById(`${containerId}-confirm-revert`);
+      
+      if (revertPopup) {
+        revertPopup.classList.remove('show');
+      }
+      if (revertSelect) {
+        revertSelect.value = '';
+      }
+      if (confirmRevert) {
+        confirmRevert.disabled = true;
+        confirmRevert.textContent = 'Confirm Revert';
+      }
+    }
+
+    // Initialize Revert Modal Functionality
+    function initializeRevertModal(containerId, section) {
+      const revertPopup = document.getElementById(`${containerId}-revert-popup`);
+      const closeRevertPopup = document.getElementById(`${containerId}-close-revert-popup`);
+      const revertSelect = document.getElementById(`${containerId}-revert-select`);
+      const confirmRevert = document.getElementById(`${containerId}-confirm-revert`);
+
+      if (!revertPopup || !closeRevertPopup || !revertSelect || !confirmRevert) {
+        return;
+      }
+
+      closeRevertPopup.addEventListener('click', () => closeRevertModal(containerId));
+      
+      revertPopup.addEventListener('click', (e) => {
+        if (e.target === revertPopup) {
+          closeRevertModal(containerId);
+        }
+      });
+
+      revertSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+        confirmRevert.disabled = !selectedValue;
+        confirmRevert.textContent = selectedValue ? `Revert Last ${selectedValue} Upload(s)` : 'Confirm Revert';
+      });
+
+      confirmRevert.addEventListener('click', function() {
+        const count = parseInt(revertSelect.value);
+        if (count) {
+          revertUploads(containerId, section, count);
+        }
+      });
+
+      const handleEscape = (e) => {
+        if (e.key === 'Escape' && revertPopup.classList.contains('show')) {
+          closeRevertModal(containerId);
+        }
+      };
+      document.addEventListener('keydown', handleEscape);
+      revertPopup._handleEscape = handleEscape;
+    }
+
+    // Initialize Revert Button
+    function initializeRevertButton(containerId, section) {
+      const revertButton = document.getElementById(`${containerId}-revert-last-uploads`);
+      if (revertButton) {
+        revertButton.disabled = false;
+        revertButton.style.opacity = '1';
+        revertButton.style.cursor = 'pointer';
+        
+        revertButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const revertPopup = document.getElementById(`${containerId}-revert-popup`);
+          if (revertPopup) {
+            revertPopup.classList.add('show');
+          }
+        });
+      }
+    }
+
+    // Initialize Upload Section
+    function initializeUpload(containerId, section, sectionTitle) {
+      const form = document.getElementById(`${containerId}-upload-form`);
+      const fileInput = document.getElementById(`${containerId}-file-input`);
+      const dragDropArea = document.getElementById(`${containerId}-drag-drop-area`);
+      const uploadButton = document.getElementById(`${containerId}-upload-button`);
+      const progressBar = document.getElementById(`${containerId}-progress-bar`);
+      const progress = document.getElementById(`${containerId}-progress`);
+      const message = document.getElementById(`${containerId}-message`);
+      const downloadLink = document.getElementById(`${containerId}-download-sample-link`);
+
+      if (!form || !fileInput || !dragDropArea) return;
+
+      // Download sample link
+      if (downloadLink) {
+        downloadLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          downloadSample(containerId, section);
+        });
+      }
+
+      // File input change handler with validation
+      function handleFileChange() {
+        const file = fileInput.files[0];
+        const isValid = isValidFile(file);
+        
+        updateDragDropArea(fileInput, dragDropArea);
+        
+        uploadButton.disabled = !isValid;
+        
+        if (!isValid && file) {
+          showMessage(containerId, 'Please select a valid CSV or Excel file (.csv, .xls, .xlsx only)', 'error');
+          dragDropArea.classList.add('invalid');
+        } else {
+          dragDropArea.classList.remove('invalid');
+        }
+      }
+
+      fileInput.addEventListener('change', handleFileChange);
+
+      // Drag and drop with strict validation
+      const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isValidFile(e.dataTransfer.files[0])) {
+          dragDropArea.classList.add('drag-over');
+        }
+      };
+
+      const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragDropArea.classList.remove('drag-over', 'invalid');
+      };
+
+      const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragDropArea.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && isValidFile(files[0])) {
+          fileInput.files = files;
+          handleFileChange();
+        } else if (files.length > 0) {
+          showMessage(containerId, 'Invalid file dropped. Only CSV and Excel files are accepted.', 'error');
+          dragDropArea.classList.add('invalid');
+        }
+      };
+
+      dragDropArea.addEventListener('dragover', handleDragOver);
+      dragDropArea.addEventListener('dragenter', handleDragOver);
+      dragDropArea.addEventListener('dragleave', handleDragLeave);
+      dragDropArea.addEventListener('drop', handleDrop);
+      
+      dragDropArea.addEventListener('click', () => {
+        fileInput.value = '';
+        fileInput.click();
+      });
+
+      // Form submission
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const file = fileInput.files[0];
+        
+        if (!file) {
+          showMessage(containerId, 'Please select a file to upload.', 'error');
+          return;
+        }
+        
+        if (!isValidFile(file)) {
+          showMessage(containerId, 'Invalid file format. Only CSV and Excel files (.csv, .xls, .xlsx) are allowed.', 'error');
+          dragDropArea.classList.add('invalid');
+          return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          showMessage(containerId, 'File size too large. Maximum 10MB allowed.', 'error');
+          return;
+        }
+
+        uploadButton.disabled = true;
+        uploadButton.textContent = 'Uploading...';
+        if (progressBar) progressBar.classList.add('active');
+        if (message) message.classList.remove('show');
+
+        let progressWidth = 0;
+        const progressInterval = setInterval(() => {
+          progressWidth += 10;
+          if (progress) progress.style.width = progressWidth + '%';
+          if (progressWidth >= 100) clearInterval(progressInterval);
+        }, 200);
+
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const response = await fetch(API_ENDPOINTS[section].upload, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${TOKEN}`
+            },
+            body: formData
+          });
+
+          clearInterval(progressInterval);
+          if (progress) progress.style.width = '100%';
+
+          if (!response.ok) {
+            const errorData = await parseResponse(response);
+            throw new Error(errorData.message || errorData.error || `HTTP ${response.status}: Upload failed`);
+          }
+
+          const result = await parseResponse(response);
+          if (progressBar) progressBar.classList.remove('active');
+          showMessage(containerId, result.message || `${sectionTitle} uploaded successfully!`, 'success', result.previousVersion);
+          
+          form.reset();
+          if (progress) progress.style.width = '0%';
+          dragDropArea.classList.remove('invalid', 'drag-over');
+          updateDragDropArea(fileInput, dragDropArea);
+          uploadButton.disabled = true;
+
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          clearInterval(progressInterval);
+          if (progressBar) progressBar.classList.remove('active');
+          showMessage(containerId, `Upload failed: ${error.message}`, 'error');
+        } finally {
+          uploadButton.disabled = false;
+          uploadButton.textContent = `Upload ${sectionTitle}`;
+        }
+      });
+
+      initializeRevertButton(containerId, section);
+      initializeRevertModal(containerId, section);
+    }
+
+    // Initialize Holiday Upload
+    function initializeHolidayUpload() {
+      initializeUpload('holiday', 'holiday', 'Holidays');
+    }
+
+    // Initialize Variant OOS Upload
+    function initializeVariantOosUpload() {
+      initializeUpload('variant-oos', 'variantOos', 'Variant OOS');
+    }
+
+    // Initialize Variant Delays Upload
+    function initializeVariantDelaysUpload() {
+      initializeUpload('variant-delays', 'variantDelays', 'Variant Delays');
+    }
+
+    // Initialize Cutoff Upload
+    function initializeCutoffUpload() {
+      initializeUpload('cutoff', 'cutoff', 'Cutoffs');
+    }
+
+    // Mobile Sidebar Toggle
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        isSidebarOpen = !isSidebarOpen;
+        sidebar.classList.toggle('show', isSidebarOpen);
+        sidebar.classList.toggle('hidden', !isSidebarOpen);
+        overlay.classList.toggle('show', isSidebarOpen);
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        sidebar.classList.add('hidden');
+        overlay.classList.remove('show');
+        isSidebarOpen = false;
+      });
+    }
+
+    // Sidebar Navigation
+    links.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.getAttribute('data-section');
+
+        links.forEach(l => {
+          l.classList.remove('active-section');
+          l.setAttribute('aria-current', 'false');
+        });
+        this.classList.add('active-section');
+        this.setAttribute('aria-current', 'page');
+
+        if (isSidebarOpen) {
+          sidebar.classList.remove('show');
+          sidebar.classList.add('hidden');
+          overlay.classList.remove('show');
+          isSidebarOpen = false;
+        }
+
+        if (section === 'holiday') {
+          loadHolidaySection();
+        } else if (section === 'variant') {
+          loadVariantSection();
+        } else if (section === 'cutoff') {
+          loadCutoffSection();
+        } else {
+          contentArea.innerHTML = `
+            <div style="max-width: 600px; margin: 0 auto; padding: 2rem; text-align: center;">
+              <h2>${section.charAt(0).toUpperCase() + section.slice(1)} Upload</h2>
+              <p>${section} upload functionality will be implemented here.</p>
+            </div>
+          `;
+        }
+      });
+    });
+
+    // Load Holiday Section
+    function loadHolidaySection() {
+      contentArea.innerHTML = `
+        <div class="upload-container holiday-upload-container">
+          <h2>Holiday Upload</h2>
+          <p class="upload-note holiday-upload-note">Upload the holiday sheet in CSV or Excel (.csv, .xls, or .xlsx) format.</p>
+          
+          <form class="upload-form holiday-upload-form" id="holiday-upload-form" enctype="multipart/form-data">
+            <div class="form-group">
+              <label>Upload a Holidays Sheet</label>
+              <div class="drag-drop-area" id="holiday-drag-drop-area">
+                <p>Drag and drop your CSV or Excel file here or click to select<br><small>Only .csv, .xls, .xlsx files accepted (Max 10MB)</small></p>
+                <input type="file" id="holiday-file-input" name="file" accept=".csv,.xls,.xlsx" required>
+                <div class="file-info"></div>
+              </div>
+            </div>
+            <button type="submit" class="upload-button" id="holiday-upload-button" disabled>Upload Holidays</button>
+            <div class="progress-bar" id="holiday-progress-bar">
+              <div id="holiday-progress"></div>
+            </div>
+            <div class="message" id="holiday-message">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="success-icon" style="display: none;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="error-icon" style="display: none;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span id="holiday-message-text"></span>
+            </div>
+          </form>
+
+          <button id="holiday-revert-last-uploads" class="revert-button">⚠️ Revert Last Uploads</button>
+
+          <div class="upload-actions">
+            <div class="download-info">
+              <p>Download the sample <a href="#" class="download-link" id="holiday-download-sample-link">Holiday.zip</a> file to get the correct format</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="holiday-revert-popup" class="modal-overlay">
+          <div class="modal-content">
+            <button id="holiday-close-revert-popup" class="close-button" aria-label="Close popup">&times;</button>
+            <div class="revert-popup-content">
+              <h3>⚠️ Revert Last Uploads</h3>
+              <p class="modal-note">This action will <strong>permanently</strong> revert the selected number of recent uploads. This cannot be undone.</p>
+              <select id="holiday-revert-select" class="revert-select">
+                <option value="" disabled selected>Select number of uploads to revert</option>
+                <option value="10">10 Uploads</option>
+                <option value="9">9 Uploads</option>
+                <option value="8">8 Uploads</option>
+                <option value="7">7 Uploads</option>
+                <option value="6">6 Uploads</option>
+                <option value="5">5 Uploads</option>
+                <option value="4">4 Uploads</option>
+                <option value="3">3 Uploads</option>
+                <option value="2">2 Uploads</option>
+                <option value="1">1 Upload</option>
+              </select>
+              <button id="holiday-confirm-revert" class="confirm-revert-button" disabled>Confirm Revert</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      setTimeout(initializeHolidayUpload, 100);
+    }
+
+    // Load Variant Section
+    function loadVariantSection() {
+      contentArea.innerHTML = `
+        <div class="upload-container variant-upload-container">
+          <h2>Variant Upload</h2>
+          <p class="upload-note variant-upload-note">Upload variant sheets in CSV or Excel (.csv, .xls, or .xlsx) format.</p>
+          
+          <div class="variant-tabs">
+            <button class="variant-tab active" data-tab="variant-oos">Variant OOS</button>
+            <button class="variant-tab" data-tab="variant-delays">Variant Delays</button>
+          </div>
+
+          <div id="variant-oos-content" class="variant-content">
+            <form class="upload-form variant-oos-upload-form" id="variant-oos-upload-form" enctype="multipart/form-data">
+              <div class="form-group">
+                <label>Upload a Variant OOS Sheet</label>
+                <div class="drag-drop-area" id="variant-oos-drag-drop-area">
+                  <p>Drag and drop your CSV or Excel file here or click to select<br><small>Only .csv, .xls, .xlsx files accepted (Max 10MB)</small></p>
+                  <input type="file" id="variant-oos-file-input" name="file" accept=".csv,.xls,.xlsx" required>
+                  <div class="file-info"></div>
+                </div>
+              </div>
+              <button type="submit" class="upload-button" id="variant-oos-upload-button" disabled>Upload Variant OOS</button>
+              <div class="progress-bar" id="variant-oos-progress-bar">
+                <div id="variant-oos-progress"></div>
+              </div>
+              <div class="message" id="variant-oos-message">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="success-icon" style="display: none;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="error-icon" style="display: none;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span id="variant-oos-message-text"></span>
+              </div>
+            </form>
+
+            <button id="variant-oos-revert-last-uploads" class="revert-button">⚠️ Revert Last Uploads</button>
+
+            <div class="upload-actions">
+              <div class="download-info">
+                <p>Download the sample <a href="#" class="download-link" id="variant-oos-download-sample-link">Variant_OOS.zip</a> file to get the correct format</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="variant-delays-content" class="variant-content" style="display: none;">
+            <form class="upload-form variant-delays-upload-form" id="variant-delays-upload-form" enctype="multipart/form-data">
+              <div class="form-group">
+                <label>Upload a Variant Delays Sheet</label>
+                <div class="drag-drop-area" id="variant-delays-drag-drop-area">
+                  <p>Drag and drop your CSV or Excel file here or click to select<br><small>Only .csv, .xls, .xlsx files accepted (Max 10MB)</small></p>
+                  <input type="file" id="variant-delays-file-input" name="file" accept=".csv,.xls,.xlsx" required>
+                  <div class="file-info"></div>
+                </div>
+              </div>
+              <button type="submit" class="upload-button" id="variant-delays-upload-button" disabled>Upload Variant Delays</button>
+              <div class="progress-bar" id="variant-delays-progress-bar">
+                <div id="variant-delays-progress"></div>
+              </div>
+              <div class="message" id="variant-delays-message">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="success-icon" style="display: none;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="error-icon" style="display: none;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span id="variant-delays-message-text"></span>
+              </div>
+            </form>
+
+            <button id="variant-delays-revert-last-uploads" class="revert-button">⚠️ Revert Last Uploads</button>
+
+            <div class="upload-actions">
+              <div class="download-info">
+                <p>Download the sample <a href="#" class="download-link" id="variant-delays-download-sample-link">Variant_Delays.zip</a> file to get the correct format</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="variant-oos-revert-popup" class="modal-overlay">
+            <div class="modal-content">
+              <button id="variant-oos-close-revert-popup" class="close-button" aria-label="Close popup">&times;</button>
+              <div class="revert-popup-content">
+                <h3>⚠️ Revert Last Variant OOS Uploads</h3>
+                <p class="modal-note">This action will <strong>permanently</strong> revert the selected number of recent Variant OOS uploads. This cannot be undone.</p>
+                <select id="variant-oos-revert-select" class="revert-select">
+                  <option value="" disabled selected>Select number of uploads to revert</option>
+                  <option value="10">10 Uploads</option>
+                  <option value="9">9 Uploads</option>
+                  <option value="8">8 Uploads</option>
+                  <option value="7">7 Uploads</option>
+                  <option value="6">6 Uploads</option>
+                  <option value="5">5 Uploads</option>
+                  <option value="4">4 Uploads</option>
+                  <option value="3">3 Uploads</option>
+                  <option value="2">2 Uploads</option>
+                  <option value="1">1 Upload</option>
+                </select>
+                <button id="variant-oos-confirm-revert" class="confirm-revert-button" disabled>Confirm Revert</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="variant-delays-revert-popup" class="modal-overlay">
+            <div class="modal-content">
+              <button id="variant-delays-close-revert-popup" class="close-button" aria-label="Close popup">&times;</button>
+              <div class="revert-popup-content">
+                <h3>⚠️ Revert Last Variant Delays Uploads</h3>
+                <p class="modal-note">This action will <strong>permanently</strong> revert the selected number of recent Variant Delays uploads. This cannot be undone.</p>
+                <select id="variant-delays-revert-select" class="revert-select">
+                  <option value="" disabled selected>Select number of uploads to revert</option>
+                  <option value="10">10 Uploads</option>
+                  <option value="9">9 Uploads</option>
+                  <option value="8">8 Uploads</option>
+                  <option value="7">7 Uploads</option>
+                  <option value="6">6 Uploads</option>
+                  <option value="5">5 Uploads</option>
+                  <option value="4">4 Uploads</option>
+                  <option value="3">3 Uploads</option>
+                  <option value="2">2 Uploads</option>
+                  <option value="1">1 Upload</option>
+                </select>
+                <button id="variant-delays-confirm-revert" class="confirm-revert-button" disabled>Confirm Revert</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Initialize tab functionality
+      const tabs = document.querySelectorAll('.variant-tab');
+      const contents = document.querySelectorAll('.variant-content');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          contents.forEach(c => c.style.display = 'none');
+
+          this.classList.add('active');
+          const tabContent = document.getElementById(`${this.getAttribute('data-tab')}-content`);
+          if (tabContent) {
+            tabContent.style.display = 'block';
+          }
+
+          if (this.getAttribute('data-tab') === 'variant-oos') {
+            setTimeout(initializeVariantOosUpload, 100);
+          } else {
+            setTimeout(initializeVariantDelaysUpload, 100);
+          }
+        });
+      });
+
+      // Initialize the active tab
+      setTimeout(initializeVariantOosUpload, 100);
+    }
+
+    // Load Cutoff Section
+    function loadCutoffSection() {
+      contentArea.innerHTML = `
+        <div class="upload-container cutoff-upload-container">
+          <h2>Cutoff Upload</h2>
+          <p class="upload-note cutoff-upload-note">Upload the cutoff sheet in CSV or Excel (.csv, .xls, or .xlsx) format.</p>
+          
+          <form class="upload-form cutoff-upload-form" id="cutoff-upload-form" enctype="multipart/form-data">
+            <div class="form-group">
+              <label>Upload a Cutoff Sheet</label>
+              <div class="drag-drop-area" id="cutoff-drag-drop-area">
+                <p>Drag and drop your CSV or Excel file here or click to select<br><small>Only .csv, .xls, .xlsx files accepted (Max 10MB)</small></p>
+                <input type="file" id="cutoff-file-input" name="file" accept=".csv,.xls,.xlsx" required>
+                <div class="file-info"></div>
+              </div>
+            </div>
+            <button type="submit" class="upload-button" id="cutoff-upload-button" disabled>Upload Cutoffs</button>
+            <div class="progress-bar" id="cutoff-progress-bar">
+              <div id="cutoff-progress"></div>
+            </div>
+            <div class="message" id="cutoff-message">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="success-icon" style="display: none;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="error-icon" style="display: none;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span id="cutoff-message-text"></span>
+            </div>
+          </form>
+
+          <button id="cutoff-revert-last-uploads" class="revert-button">⚠️ Revert Last Uploads</button>
+
+          <div class="upload-actions">
+            <div class="download-info">
+              <p>Download the sample <a href="#" class="download-link" id="cutoff-download-sample-link">Cutoff.zip</a> file to get the correct format</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="cutoff-revert-popup" class="modal-overlay">
+          <div class="modal-content">
+            <button id="cutoff-close-revert-popup" class="close-button" aria-label="Close popup">&times;</button>
+            <div class="revert-popup-content">
+              <h3>⚠️ Revert Last Uploads</h3>
+              <p class="modal-note">This action will <strong>permanently</strong> revert the selected number of recent uploads. This cannot be undone.</p>
+              <select id="cutoff-revert-select" class="revert-select">
+                <option value="" disabled selected>Select number of uploads to revert</option>
+                <option value="10">10 Uploads</option>
+                <option value="9">9 Uploads</option>
+                <option value="8">8 Uploads</option>
+                <option value="7">7 Uploads</option>
+                <option value="6">6 Uploads</option>
+                <option value="5">5 Uploads</option>
+                <option value="4">4 Uploads</option>
+                <option value="3">3 Uploads</option>
+                <option value="2">2 Uploads</option>
+                <option value="1">1 Upload</option>
+              </select>
+              <button id="cutoff-confirm-revert" class="confirm-revert-button" disabled>Confirm Revert</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      setTimeout(initializeCutoffUpload, 100);
+    }
+
+    // Cleanup previous modals
+    const existingPopups = [
+      'holiday-revert-popup',
+      'variant-oos-revert-popup',
+      'variant-delays-revert-popup',
+      'cutoff-revert-popup'
+    ];
+    existingPopups.forEach(popupId => {
+      const popup = document.getElementById(popupId);
+      if (popup && popup._handleEscape) {
+        document.removeEventListener('keydown', popup._handleEscape);
+      }
+    });
+
+    // Logout
+    if (logoutButton) {
+      logoutButton.addEventListener('click', function() {
+        if (confirm('Are you sure you want to logout?')) {
+          alert('Logging out...');
+        }
+      });
+    }
+
+    // Initial load
+    loadCutoffSection();
+  });
+  </script>
+</body>
+</html>
